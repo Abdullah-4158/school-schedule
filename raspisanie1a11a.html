@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Расписание классов 1А-11А на неделю</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(145deg, #0d0d0d, #1e1e1e);
+      color: #fff;
+      font-family: 'Rubik', sans-serif;
+      text-align: center;
+      padding-bottom: 80px;
+    }
+    .logo {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+    .logo img {
+      width: 50px;
+      border-radius: 50%;
+    }
+    .logo span {
+      font-size: 16px;
+      color: goldenrod;
+    }
+    h1 {
+      margin-top: 80px;
+      font-size: 2rem;
+      color: #ffa500;
+      margin-bottom: 10px;
+    }
+    .info {
+      font-size: 1.2rem;
+      color: #ddd;
+      margin-bottom: 20px;
+    }
+    .schedule {
+      display: none;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 700px;
+      font-size: 1.6rem;
+      text-align: left;
+      line-height: 1.4;
+    }
+    .schedule.visible {
+      display: block;
+    }
+    h2 {
+      font-size: 1.8rem;
+      color: #ffa500;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    p {
+      margin: 0;
+    }
+    p i {
+      margin-right: 8px;
+      color: #ffa500;
+    }
+    .marquee-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #111;
+      overflow: hidden;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      z-index: 1000;
+    }
+    .marquee {
+      white-space: nowrap;
+      color: #ffa500;
+      font-weight: bold;
+      font-size: 1rem;
+      padding-left: 100%;
+      animation: marqueeAnim 15s linear infinite;
+    }
+    @keyframes marqueeAnim {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo">
+    <img src="./raspisanie/IS_logo-final_01.png" alt="Логотип школы" />
+    <span>Institute School</span>
+  </div>
+
+  <h1>Расписание классов 1А – 11А на неделю</h1>
+  <div class="info" id="currentClassDay">Класс: 1А | День: Понедельник</div>
+
+  <div id="schedules-container">
+    <!-- Здесь будут динамически вставляться расписания -->
+  </div>
+
+  <script>
+    // Дни недели на русском
+    const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'];
+    // Классы от 1А до 11А
+    const classes = [];
+    for(let i=1; i<=11; i++){
+      classes.push(i + 'А');
+    }
+
+    // Пример расписания уроков (можно заменить на реальные)
+    // Каждый элемент – уроки на день (массив строк)
+    // Для простоты сделаем для каждого дня одинаковое расписание, но с разными предметами для разных классов и дней.
+    // В реальном проекте тут лучше загрузить с сервера или хранить в более сложной структуре.
+    function getScheduleFor(className, dayIndex) {
+      // Для примера: разные уроки для разных дней
+      const schedulesByDay = [
+        [
+          {icon: 'fas fa-calculator', name: 'Математика', time: '08:00'},
+          {icon: 'fas fa-book', name: 'Русский язык', time: '08:45'},
+          {icon: 'fas fa-atom', name: 'Физика', time: '09:30'},
+          {icon: 'fas fa-landmark', name: 'История', time: '10:15'},
+          {icon: 'fas fa-utensils', name: 'Обед', time: '11:00'},
+          {icon: 'fas fa-microscope', name: 'Химия', time: '11:30'},
+          {icon: 'fas fa-globe', name: 'География', time: '12:15'},
+          {icon: 'fas fa-music', name: 'Музыка', time: '13:00'},
+          {icon: 'fas fa-language', name: 'Английский язык', time: '13:45'},
+          {icon: 'fas fa-apple-alt', name: 'Полдник', time: '14:30'},
+          {icon: 'fas fa-pencil-alt', name: 'Труд', time: '15:00'},
+        ],
+        [
+          {icon: 'fas fa-book', name: 'Литература', time: '08:00'},
+          {icon: 'fas fa-dna', name: 'Биология', time: '08:45'},
+          {icon: 'fas fa-brain', name: 'Психология', time: '09:30'},
+          {icon: 'fas fa-landmark', name: 'История', time: '10:15'},
+          {icon: 'fas fa-utensils', name: 'Обед', time: '11:00'},
+          {icon: 'fas fa-language', name: 'Английский язык', time: '11:30'},
+          {icon: 'fas fa-calculator', name: 'Математика', time: '12:15'},
+          {icon: 'fas fa-paint-brush', name: 'Рисование', time: '13:00'},
+          {icon: 'fas fa-music', name: 'Музыка', time: '13:45'},
+          {icon: 'fas fa-apple-alt', name: 'Полдник', time: '14:30'},
+          {icon: 'fas fa-desktop', name: 'Информатика', time: '15:00'},
+        ],
+        [
+          {icon: 'fas fa-globe', name: 'География', time: '08:00'},
+          {icon: 'fas fa-shield-alt', name: 'ОБЖ', time: '08:45'},
+          {icon: 'fas fa-desktop', name: 'Информатика', time: '09:30'},
+          {icon: 'fas fa-book-open', name: 'Литература', time: '10:15'},
+          {icon: 'fas fa-utensils', name: 'Обед', time: '11:00'},
+          {icon: 'fas fa-music', name: 'Музыка', time: '11:30'},
+          {icon: 'fas fa-atom', name: 'Физика', time: '12:15'},
+          {icon: 'fas fa-brain', name: 'Психология', time: '13:00'},
+          {icon: 'fas fa-book', name: 'Русский язык', time: '13:45'},
+          {icon: 'fas fa-apple-alt', name: 'Полдник', time: '14:30'},
+          {icon: 'fas fa-calculator', name: 'Математика', time: '15:00'},
+        ],
+        [
+          {icon: 'fas fa-calculator', name: 'Математика', time: '08:00'},
+          {icon: 'fas fa-book', name: 'Русский язык', time: '08:45'},
+          {icon: 'fas fa-dna', name: 'Биология', time: '09:30'},
+          {icon: 'fas fa-atom', name: 'Физика', time: '10:15'},
+          {icon: 'fas fa-utensils', name: 'Обед', time: '11:00'},
+          {icon: 'fas fa-language', name: 'Английский язык', time: '11:30'},
+          {icon: 'fas fa-paint-brush', name: 'Рисование', time: '12:15'},
+          {icon: 'fas fa-music', name: 'Музыка', time: '13:00'},
+          {icon: 'fas fa-landmark', name: 'История', time: '13:45'},
+          {icon: 'fas fa-apple-alt', name: 'Полдник', time: '14:30'},
+          {icon: 'fas fa-pencil-alt', name: 'Труд', time: '15:00'},
+        ],
+        [
+          {icon: 'fas fa-dna', name: 'Биология', time: '08:00'},
+          {icon: 'fas fa-book', name: 'Литература', time: '08:45'},
+          {icon: 'fas fa-calculator', name: 'Математика', time: '09:30'},
+          {icon: 'fas fa-brain', name: 'Психология', time: '10:15'},
+          {icon: 'fas fa-utensils', name: 'Обед', time: '11:00'},
+          {icon: 'fas fa-globe', name: 'География', time: '11:30'},
+          {icon: 'fas fa-music', name: 'Музыка', time: '12:15'},
+          {icon: 'fas fa-language', name: 'Английский язык', time: '13:00'},
+          {icon: 'fas fa-apple-alt', name: 'Полдник', time: '13:45'},
+          {icon: 'fas fa-desktop', name: 'Информатика', time: '14:30'},
+          {icon: 'fas fa-pencil-alt', name: 'Труд', time: '15:00'},
+        ]
+      ];
+
+      // Можно добавить вариацию по классу — например сдвиг уроков по времени или предметам
+      // Но пока просто возвращаем по дню
+      return schedulesByDay[dayIndex];
+    }
+
+    // Контейнер для расписаний
+    const container = document.getElementById('schedules-container');
+    const info = document.getElementById('currentClassDay');
+
+    // Сохраним все расписания, чтобы переключать видимые
+    const allSchedules = [];
+
+    // Создаем расписания для всех классов и дней
+    classes.forEach(className => {
+      days.forEach((day, dayIndex) => {
+        const div = document.createElement('div');
+        div.classList.add('schedule');
+        div.dataset.class = className;
+        div.dataset.day = day;
+
+        // Формируем HTML уроков
+        const lessons = getScheduleFor(className, dayIndex);
+        let lessonsHTML = '';
+        lessons.forEach(lesson => {
+          lessonsHTML += `<i class="${lesson.icon}"></i> ${lesson.time} – ${lesson.name}<br/>`;
+        });
+
+        div.innerHTML = `<h2>Класс ${className} – ${day}</h2><p>${lessonsHTML}</p>`;
+        container.appendChild(div);
+        allSchedules.push(div);
+      });
+    });
+
+    let currentIndex = 0;
+    const totalSchedules = allSchedules.length;
+
+    function showSchedule(index) {
+      allSchedules.forEach((el, i) => {
+        el.classList.toggle('visible', i === index);
+      });
+      // Обновляем информацию сверху
+      const c = allSchedules[index].dataset.class;
+      const d = allSchedules[index].dataset.day;
+      info.textContent = `Класс: ${c} | День: ${d}`;
+    }
+
+    // Показываем первый
+    showSchedule(currentIndex);
+
+    // Автоматическое переключение каждые 5 секунд
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % totalSchedules;
+      showSchedule(currentIndex);
+    }, 5000);
+  </script>
+
+  <div class="marquee-container">
+    <div class="marquee">
+      Institute School &nbsp; • &nbsp; Institute School &nbsp; • &nbsp; Institute School
+    </div>
+  </div>
+
+</body>
+</html>
